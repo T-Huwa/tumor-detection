@@ -16,7 +16,6 @@ interface User {
   hospital: string;
 }
 
-// Custom FilterButton Component
 function FilterButton({
   label,
   isActive,
@@ -114,7 +113,6 @@ export default function UsersListPage() {
       <div className="px-6 py-7 my-6">
         <h3 className="font-bold text-lg mb-6">List of Users</h3>
 
-        {/* Filter Buttons */}
         <div className="mb-6 flex gap-2">
           <FilterButton
             label="All"
@@ -133,7 +131,6 @@ export default function UsersListPage() {
           />
         </div>
 
-        {/* Users Table */}
         <Table>
           <TableRow>
             <TableHead>#</TableHead>

@@ -10,7 +10,6 @@ const caseData = {
   age: 54,
   address: '1/A Sandstone area Johannesburg',
   mobile: '987654321',
-  email: 'p.john@gmail.com',
   aiDiagnosis: 'The brain MRI images, after analysis, indicate abnormal tissue growth or lesion in the specified coordinates, pointing towards a Glioma condition. The size and area of the lesion suggest a significantly progressed stage of the disease.',
   recommendedTests: 'Spinal Tap (Lumbar Puncture) to check for tumor cells in the cerebrospinal fluid, and a PET scan for detailed imaging.',
   mriImage: '/placeholder.svg?height=200&width=200',
@@ -48,7 +47,6 @@ export default async function CaseDetail({params,} : {params: Promise<{id: strin
             <p><strong>Age:</strong> {caseData.age}</p>
             <p><strong>Address:</strong> {caseData.address}</p>
             <p><strong>Mobile:</strong> {caseData.mobile}</p>
-            <p><strong>Email:</strong> {caseData.email}</p>
           </CardContent>
         </Card>
 

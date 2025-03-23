@@ -1,6 +1,6 @@
 import * as Avatar from '@radix-ui/react-avatar'
 import * as Label from '@radix-ui/react-label'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
 
 interface User{

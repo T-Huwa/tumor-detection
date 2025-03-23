@@ -10,7 +10,6 @@ const caseData = {
   age: 54,
   address: '1/A Sandstone area Johannesburg',
   mobile: '987654321',
-  email: 'p.john@gmail.com',
   aiDiagnosis: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique quis ipsam vero voluptatum sed eum id animi repellendus ipsa ratione.',
   recommendedTests: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, consequatur natus quibusdam accusantium eligendi itaque quasi, ea id at sed nihil magnam veniam hic dolor repellendus in culpa ratione a? Quam ea sapiente aut, ex provident illum dicta quasi optio.',
   mriImage: '/placeholder.svg?height=200&width=200',
@@ -47,7 +46,6 @@ export default async function CaseDetail({params,} : {params: Promise<{id: strin
             <p><strong>Age:</strong> {caseData.age}</p>
             <p><strong>Address:</strong> {caseData.address}</p>
             <p><strong>Mobile:</strong> {caseData.mobile}</p>
-            <p><strong>Email:</strong> {caseData.email}</p>
           </CardContent>
         </Card>
 

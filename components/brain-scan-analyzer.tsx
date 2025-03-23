@@ -16,7 +16,6 @@ const caseData = {
   age: 54,
   address: '1/A Sandstone area Johannesburg',
   mobile: '987654321',
-  email: 'p.john@gmail.com',
   aiDiagnosis: 'The brain MRI images, after analysis, indicate abnormal tissue growth or lesion in the specified coordinates, pointing towards a Glioma condition. The size and area of the lesion suggest a significantly progressed stage of the disease.',
   recommendedTests: 'Spinal Tap (Lumbar Puncture) to check for tumor cells in the cerebrospinal fluid, and a PET scan for detailed imaging.',
   mriImage: '/mri.jpg',
@@ -142,7 +141,6 @@ export default function BrainScanAnalyzer() {
                   <input type="number" placeholder="Patient Age" className="w-full border p-3 rounded-md" />
                   <textarea placeholder="Address" className="w-full border p-3 rounded-md" rows={3}></textarea>
                   <input type="text" placeholder="Enter mobile number" className="w-full border p-3 rounded-md" />
-                  <input type="email" placeholder="Enter email address" className="w-full border p-3 rounded-md" />
                 </div>
       
                 <div>
