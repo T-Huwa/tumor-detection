@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brain Tumor AI</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <style>
+      .background-image {
+        background-image: url("./images/home-bg.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      .falling-text span {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(-50px);
+        animation: fall-in 0.5s ease-out forwards;
+      }
+
+      .falling-text span:nth-child(1) {
+        animation-delay: 0.2s;
+      }
+
+      .falling-text span:nth-child(2) {
+        animation-delay: 0.35s;
+      }
+
+      .falling-text span:nth-child(3) {
+        animation-delay: 0.45s;
+      }
+
+      .falling-text span:nth-child(4) {
+        animation-delay: 0.55s;
+      }
+
+      .falling-text span:nth-child(5) {
+        animation-delay: 0.65s;
+      }
+
+      @keyframes fall-in {
+        0% {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <main class="relative z-10 w-full h-full">
+      <header
+        class="fixed top-0 left-0 right-0 z-50 bg-white/20 backdrop-blur-md transition-all duration-200 py-3 shadow-md"
+      >
+        <div class="container mx-auto px-4">
+          <div class="flex items-center justify-between">
+            <a class="flex items-center" href="/">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-brain-circuit h-6 w-6 text-blue-600 mr-2"
+              >
+                <path
+                  d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"
+                ></path>
+                <path d="M9 13a4.5 4.5 0 0 0 3-4"></path>
+                <path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"></path>
+                <path d="M3.477 10.896a4 4 0 0 1 .585-.396"></path>
+                <path d="M6 18a4 4 0 0 1-1.967-.516"></path>
+                <path d="M12 13h4"></path>
+                <path d="M12 18h6a2 2 0 0 1 2 2v1"></path>
+                <path d="M12 8h8"></path>
+                <path d="M16 8V5a2 2 0 0 1 2-2"></path>
+                <circle cx="16" cy="13" r=".5"></circle>
+                <circle cx="18" cy="3" r=".5"></circle>
+                <circle cx="20" cy="21" r=".5"></circle>
+                <circle cx="20" cy="8" r=".5"></circle>
+              </svg>
+              <span class="font-bold text-blue-900 text-lg"
+                >Brain Tumor AI</span
+              >
+            </a>
+            <nav class="hidden md:flex items-center space-x-1">
+              <a
+                class="px-3 py-2 rounded-md text-sm font-medium transition-colors bg-blue-300 text-blue-700"
+                href="#"
+                >Home</a
+              >
+              <a
+                class="px-3 py-2 rounded-md text-sm font-medium transition-colors text-blue-600 hover:bg-blue-200 hover:text-blue-700"
+                href="./user/analyze.html"
+                >Prediction</a
+              >
+              <a
+                class="px-3 py-2 rounded-md text-sm font-medium transition-colors text-blue-600 hover:bg-blue-200 hover:text-blue-700"
+                href="./user/results.html"
+                >Scan Results</a
+              >
+              <a
+                class="px-3 py-2 rounded-md text-sm font-medium transition-colors text-blue-600 hover:bg-blue-200 hover:text-blue-700"
+                href="./user/profile.html"
+                >User Profile</a
+              >
+              <button
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background h-9 rounded-md px-3 ml-2 text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+              >
+                Logout
+              </button>
+            </nav>
+            <button
+              class="md:hidden p-2 rounded-md text-blue-600 hover:bg-blue-50"
+              aria-expanded="false"
+              aria-label="Toggle menu"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-menu h-6 w-6"
+              >
+                <line x1="4" x2="20" y1="12" y2="12"></line>
+                <line x1="4" x2="20" y1="6" y2="6"></line>
+                <line x1="4" x2="20" y1="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div class="min-h-screen w-full background-image">
+        <div
+          class="absolute inset-0 bg-gradient-to-tr from-blue-500/20 via-teal-500/10 to-transparent"
+        ></div>
+        <div class="relative z-10 p-6">
+          <section
+            class="container flex min-h-[calc(100vh-3.5rem)] max-w-screen-2xl flex-col-reverse items-center justify-center gap-12 py-16 md:flex-row md:py-24 lg:py-32"
+          >
+            <div
+              class="flex flex-1 flex-col space-y-6 text-center md:text-left"
+            >
+              <div class="space-y-4">
+                <p
+                  class="falling-text text-3xl font-bold tracking-tight text-gray-800 sm:text-5xl md:text-6xl"
+                >
+                  <span>Advanced</span> <span>Brain</span> <span>Tumor</span>
+                  <span>Detection</span> <span>System</span>
+                </p>
+                <p
+                  class="mx-auto max-w-[42rem] text-lg leading-normal text-white md:mx-0"
+                >
+                  Leveraging AI and machine learning to provide accurate, rapid
+                  detection and classification of brain tumors from MRI scans.
+                </p>
+              </div>
+              <div
+                class="flex flex-col space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0 md:justify-start"
+              >
+                <a
+                  class="p-3 text-white rounded-lg bg-gradient-to-r from-blue-600 to-teal-500 hover:opacity-90"
+                  href="/user/analyze"
+                  >Start Predicting</a
+                >
+              </div>
+            </div>
+            <div class="flex-1">
+              <div
+                class="relative mx-auto aspect-square max-w-md overflow-hidden rounded-xl border border-gray-300 shadow-xl md:max-w-lg"
+              >
+                <img
+                  alt="Brain MRI scan with tumor detection overlay"
+                  loading="lazy"
+                  width="600"
+                  height="600"
+                  decoding="async"
+                  class="object-cover"
+                  src="./images/tumor-img.jpg"
+                />
+                <div
+                  class="absolute bottom-4 left-4 right-4 rounded-md bg-black/30 p-4 backdrop-blur-sm"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-gray-100">
+                        Tumor detected
+                      </p>
+                      <p class="text-xs text-gray-200">
+                        Glioblastoma - 98.7% confidence
+                      </p>
+                    </div>
+                    <div
+                      class="h-3 w-3 rounded-full bg-red-500 shadow-lg shadow-red-500/50"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

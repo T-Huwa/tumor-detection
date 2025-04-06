@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brain Tumor AI</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/heroicons@2.0.13/dist/24/outline/heroicons.min.js"></script>
+    <style>
+      input[type="file"] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex flex-col">
+    <header
+      class="fixed top-0 left-0 right-0 z-50 bg-white/20 backdrop-blur-md transition-all duration-200 py-3 shadow-md"
+    >
+      <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between">
+          <a class="flex items-center" href="/">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-brain-circuit h-6 w-6 text-blue-600 mr-2"
+            >
+              <path
+                d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"
+              ></path>
+              <path d="M9 13a4.5 4.5 0 0 0 3-4"></path>
+              <path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"></path>
+              <path d="M3.477 10.896a4 4 0 0 1 .585-.396"></path>
+              <path d="M6 18a4 4 0 0 1-1.967-.516"></path>
+              <path d="M12 13h4"></path>
+              <path d="M12 18h6a2 2 0 0 1 2 2v1"></path>
+              <path d="M12 8h8"></path>
+              <path d="M16 8V5a2 2 0 0 1 2-2"></path>
+              <circle cx="16" cy="13" r=".5"></circle>
+              <circle cx="18" cy="3" r=".5"></circle>
+              <circle cx="20" cy="21" r=".5"></circle>
+              <circle cx="20" cy="8" r=".5"></circle>
+            </svg>
+            <span class="font-bold text-blue-900 text-lg">Brain Tumor AI</span>
+          </a>
+          <nav class="hidden md:flex items-center space-x-1">
+            <a
+              class="px-3 py-2 rounded-md text-sm font-medium transition-colors text-blue-600 hover:bg-blue-200 hover:text-blue-700"
+              href="../index.html"
+              >Home</a
+            >
+            <a
+              class="px-3 py-2 rounded-md text-sm font-medium transition-colors text-blue-600 hover:bg-blue-200 hover:text-blue-700"
+              href="./analyze.html"
+              >Prediction</a
+            >
+            <a
+              class="px-3 py-2 rounded-md text-sm font-medium transition-colors bg-blue-300 text-blue-700"
+              href="./results.html"
+              >Scan Results</a
+            >
+            <a
+              class="px-3 py-2 rounded-md text-sm font-medium transition-colors text-blue-600 hover:bg-blue-200 hover:text-blue-700"
+              href="./profile.html"
+              >User Profile</a
+            >
+            <button
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border bg-background h-9 rounded-md px-3 ml-2 text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+            >
+              Logout
+            </button>
+          </nav>
+          <button
+            class="md:hidden p-2 rounded-md text-blue-600 hover:bg-blue-50"
+            aria-expanded="false"
+            aria-label="Toggle menu"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-menu h-6 w-6"
+            >
+              <line x1="4" x2="20" y1="12" y2="12"></line>
+              <line x1="4" x2="20" y1="6" y2="6"></line>
+              <line x1="4" x2="20" y1="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="mt-14 flex flex-1 justify-center p-6">
+      <div
+        class="overflow-x-auto border border-gray-300 rounded-lg shadow bg-white"
+      >
+        <table class="min-w-full text-sm text-left">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="border-b border-gray-300 px-4 py-2">#</th>
+              <th class="border-b border-gray-300 px-4 py-2">Prediction</th>
+              <th class="border-b border-gray-300 px-4 py-2">Probability</th>
+              <th class="border-b border-gray-300 px-4 py-2">Your Feedback</th>
+              <th class="border-b border-gray-300 px-4 py-2">
+                Assigned Doctor
+              </th>
+              <th class="border-b border-gray-300 px-4 py-2">
+                Doctor Feedback
+              </th>
+              <th class="border-b border-gray-300 px-4 py-2">
+                Doctor's Decision
+              </th>
+              <th class="border-b border-gray-300 px-4 py-2">Date & Time</th>
+              <th class="border-b border-gray-300 px-4 py-2">Action</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTableBody" class="bg-white"></tbody>
+        </table>
+      </div>
+    </main>
+    <script>
+      const cases = [
+        {
+          caseId: 35,
+          modelPrediction: "Meningioma (Tumor)",
+          probability: 98.22,
+          yourFeedback: "None",
+          assignedDoctor: "None",
+          doctorFeedback: "None",
+          doctorDecision: "None",
+          dateTime: "2024-03-01 22:08:48",
+        },
+        {
+          caseId: 36,
+          modelPrediction: "Pituitary (Tumor)",
+          probability: 100.0,
+          yourFeedback:
+            "looks like model is right patient is suffering from Pituitary Tumor. Forwarded for doctor's review",
+          assignedDoctor: "akash.mishra@gmail.com",
+          doctorFeedback:
+            "Referred for CT Scan and Harmonal Blood test to confirm the tumor",
+          doctorDecision: "Pituitary (Tumor)",
+          dateTime: "2024-03-02 21:28:30",
+        },
+        {
+          caseId: 37,
+          modelPrediction: "Meningioma (Tumor)",
+          probability: 100.0,
+          yourFeedback: "Looks like Meningioma forwarded to doctor",
+          assignedDoctor: "akash.mishra@gmail.com",
+          doctorFeedback:
+            "yes it seems meningioma still MRS and PET need to be done for confirmation",
+          doctorDecision: "Meningioma (Tumor)",
+          dateTime: "2024-03-02 22:33:46",
+        },
+        {
+          caseId: 38,
+          modelPrediction: "Glioma (Tumor)",
+          probability: 99.99,
+          yourFeedback: "forwarded to doctor for review",
+          assignedDoctor: "akash.mishra@gmail.com",
+          doctorFeedback: "Biopsy need to be done for confirmation of Glioma",
+          doctorDecision: "Glioma (Tumor)",
+          dateTime: "2024-03-02 22:35:59",
+        },
+        {
+          caseId: 39,
+          modelPrediction: "Glioma (Tumor)",
+          probability: 100.0,
+          yourFeedback: "looks like glioma forwarded for doctor review",
+          assignedDoctor: "akash.mishra@gmail.com",
+          doctorFeedback:
+            "The model is right need to do Lumbar Puncture and PET scan for confirmation",
+          doctorDecision: "Glioma (Tumor)",
+          dateTime: "2024-03-03 05:29:18",
+        },
+      ];
+
+      const tableBody = document.getElementById("resultsTableBody");
+
+      cases.forEach((c) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+        <td class="border-b border-gray-300 px-4 py-2">${c.caseId}</td>
+        <td class="border-b border-gray-300 px-4 py-2">${c.modelPrediction}</td>
+        <td class="border-b border-gray-300 px-4 py-2">${c.probability}%</td>
+        <td class="border-b border-gray-300 px-4 py-2">${c.yourFeedback}</td>
+        <td class="border-b border-gray-300 px-4 py-2">${c.assignedDoctor}</td>
+        <td class="border-b border-gray-300 px-4 py-2">${c.doctorFeedback}</td>
+        <td class="border-b border-gray-300 px-4 py-2">${c.doctorDecision}</td>
+        <td class="border-b border-gray-300 px-4 py-2">${c.dateTime}</td>
+        <td class="border-b border-gray-300 px-4 py-2">
+          <a href="./result.html?case_id=${c.caseId}" class="px-3 py-2 rounded-full bg-blue-100 hover:bg-blue-300 text-sm font-light transition-colors">View</a>
+        </td>
+      `;
+        tableBody.appendChild(row);
+      });
+    </script>
+  </body>
+</html>

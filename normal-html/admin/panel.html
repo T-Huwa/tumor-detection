@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brain Tumor AI - Admin Panel</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+      .filter-btn {
+        cursor: pointer;
+      }
+      .active {
+        background-color: #2563eb;
+        color: white;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <main class="relative z-10 w-full h-full">
+      <header
+        class="fixed top-0 left-0 right-0 z-50 bg-white/20 backdrop-blur-md transition-all duration-200 py-3 shadow-md"
+      >
+        <div class="container mx-auto px-4">
+          <div class="flex items-center justify-between">
+            <a class="flex items-center" href="/">
+              <img
+                src="../images/placeholder.svg"
+                alt="Brain Tumor AI Logo"
+                class="h-8 w-8 mr-2"
+              />
+              <span class="font-bold text-blue-900 text-lg"
+                >Brain Tumor AI</span
+              >
+            </a>
+            <nav class="hidden md:flex items-center space-x-4">
+              <a
+                class="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-blue-300 text-blue-700 hover:bg-blue-400"
+                href="/admin"
+                >Dashboard</a
+              >
+              <a
+                class="px-4 py-2 rounded-md text-sm font-medium transition-colors text-blue-600 hover:bg-blue-200 hover:text-blue-700"
+                href="/admin/users"
+                >View Users</a
+              >
+              <a
+                class="px-4 py-2 rounded-md text-sm font-medium transition-colors text-blue-600 hover:bg-blue-200 hover:text-blue-700"
+                href="/admin/panel"
+                >Admin Panel</a
+              >
+              <a
+                class="px-4 py-2 rounded-md text-sm font-medium transition-colors text-blue-600 hover:bg-blue-200 hover:text-blue-700"
+                href="/admin/data"
+                >Download Data</a
+              >
+              <button
+                class="px-4 py-2 rounded-md text-sm font-medium bg-red-500 text-white hover:bg-red-600"
+              >
+                Logout
+              </button>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      <div class="min-h-screen w-full pt-20">
+        <div class="p-6 space-y-4">
+          <h2 class="text-lg font-semibold">List of All Users</h2>
+
+          <div class="flex items-center space-x-4">
+            <button
+              id="filterAll"
+              class="filter-btn px-4 py-2 rounded-md text-sm font-medium bg-gray-400 text-white active"
+            >
+              All
+            </button>
+            <button
+              id="filterActive"
+              class="filter-btn px-4 py-2 rounded-md text-sm font-medium bg-gray-400 text-white"
+            >
+              Active
+            </button>
+            <button
+              id="filterInactive"
+              class="filter-btn px-4 py-2 rounded-md text-sm font-medium bg-gray-400 text-white"
+            >
+              Inactive
+            </button>
+          </div>
+
+          <div class="rounded-lg border border-gray-300 bg-white shadow-sm">
+            <div class="p-4">
+              <div class="relative w-full overflow-auto">
+                <table class="w-full caption-bottom text-sm">
+                  <thead class="bg-gray-100">
+                    <tr class="border-b border-gray-300">
+                      <th class="h-12 px-4 text-left font-bold">ID#</th>
+                      <th class="h-12 px-4 text-left font-bold">Name</th>
+                      <th class="h-12 px-4 text-left font-bold">Email</th>
+                      <th class="h-12 px-4 text-left font-bold">User Type</th>
+                      <th class="h-12 px-4 text-left font-bold">
+                        Date of Creation
+                      </th>
+                      <th class="h-12 px-4 text-left font-bold">Status</th>
+                      <th class="h-12 px-4 text-left font-bold">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="usersTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const users = [
+        {
+          id: 3,
+          name: "Blessings Mvula",
+          email: "blessings.mvula@gmail.com",
+          userType: "admin",
+          dateCreated: "2023-12-28 16:33:46",
+          status: "Active",
+        },
+        {
+          id: 5,
+          name: "Zione Mwale",
+          email: "zione.mwale@gmail.com",
+          userType: "doctor",
+          dateCreated: "2023-12-28 16:57:52",
+          status: "Active",
+        },
+        {
+          id: 6,
+          name: "Tadala Nkhoma",
+          email: "tadala.nkhoma@gmail.com",
+          userType: "doctor",
+          dateCreated: "2023-12-28 17:01:04",
+          status: "Inactive",
+        },
+      ];
+
+      function renderTable(filter = "All") {
+        const tableBody = document.getElementById("usersTableBody");
+        tableBody.innerHTML = "";
+
+        const filteredUsers =
+          filter === "All"
+            ? users
+            : users.filter((user) => user.status === filter);
+
+        filteredUsers.forEach((user) => {
+          const row = document.createElement("tr");
+          row.classList.add("border-b", "border-gray-300", "hover:bg-gray-100");
+
+          row.innerHTML = `
+            <td class="p-2">${user.id}</td>
+            <td class="p-2">${user.name}</td>
+            <td class="p-2">${user.email}</td>
+            <td class="p-2">${user.userType}</td>
+            <td class="p-2">${user.dateCreated}</td>
+            <td class="p-2">${user.status}</td>
+            <td class="p-2">
+              <button
+                class="px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Edit
+              </button>
+            </td>
+          `;
+
+          tableBody.appendChild(row);
+        });
+      }
+
+      function highlightActiveButton(buttonId) {
+        document.querySelectorAll(".filter-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        document.getElementById(buttonId).classList.add("active");
+      }
+
+      document.getElementById("filterAll").addEventListener("click", () => {
+        renderTable("All");
+        highlightActiveButton("filterAll");
+      });
+
+      document.getElementById("filterActive").addEventListener("click", () => {
+        renderTable("Active");
+        highlightActiveButton("filterActive");
+      });
+
+      document
+        .getElementById("filterInactive")
+        .addEventListener("click", () => {
+          renderTable("Inactive");
+          highlightActiveButton("filterInactive");
+        });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        renderTable("All");
+        highlightActiveButton("filterAll");
+      });
+    </script>
+  </body>
+</html>
