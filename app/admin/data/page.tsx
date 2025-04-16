@@ -1,7 +1,14 @@
-"use client"
+"use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 
@@ -38,7 +45,8 @@ export default function DownloadDataPage() {
       modelPrediction: "Pituitary Adenoma (Tumor)",
       probability: "98.90",
       nurse: "Limbani Chirwa",
-      nurseFeedback: "Patient shows symptoms consistent with Pituitary Adenoma.",
+      nurseFeedback:
+        "Patient shows symptoms consistent with Pituitary Adenoma.",
       doctor: "Kondwani Nyirenda",
       doctorFeedback: "Hormonal blood tests and MRI needed for confirmation.",
       decision: "Pituitary Adenoma (Tumor)",
@@ -74,7 +82,8 @@ export default function DownloadDataPage() {
       modelPrediction: "Pituitary Adenoma (Tumor)",
       probability: "97.65",
       nurse: "Thandiwe Phiri",
-      nurseFeedback: "Symptoms align with Pituitary Adenoma. Forwarded to doctor.",
+      nurseFeedback:
+        "Symptoms align with Pituitary Adenoma. Forwarded to doctor.",
       doctor: "Kondwani Nyirenda",
       doctorFeedback: "CT scan and hormonal tests recommended.",
       decision: "Pituitary Adenoma (Tumor)",
@@ -154,7 +163,6 @@ export default function DownloadDataPage() {
                 <TableHead>Assigned Doctor</TableHead>
                 <TableHead>Doctor Feedback</TableHead>
                 <TableHead>Doctor Decision</TableHead>
-                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -170,7 +178,6 @@ export default function DownloadDataPage() {
                   <TableCell>{data.doctor}</TableCell>
                   <TableCell>{data.doctorFeedback}</TableCell>
                   <TableCell>{data.decision}</TableCell>
-                  <TableCell><Download className="text-gray-600"/></TableCell>
                 </TableRow>
               ))}
             </TableBody>
