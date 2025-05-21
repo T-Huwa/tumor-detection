@@ -117,7 +117,7 @@ export function AuthForm() {
                     </div>
                   </div>
 
-                  <div>
+                  <div className="pb-5">
                     <Label htmlFor="password" className="text-gray-800">
                       Password
                     </Label>
@@ -142,7 +142,7 @@ export function AuthForm() {
                   </Button> */}
                   <Link
                     href={"/user"}
-                    className="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-full"
+                    className="p-2 mt-2 w-full bg-amber-600 hover:bg-amber-700 text-white rounded-full"
                   >
                     {isLoading ? "Authenticating..." : "Sign In"}
                   </Link>
