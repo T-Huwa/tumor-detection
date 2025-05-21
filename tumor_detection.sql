@@ -1,8 +1,9 @@
  USE `bct81wkvcenzhcmoaleb`;
  
- CREATE TABLE login_users (
+ CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(255) UNIQUE NOT NULL,
+    user_role VARCHAR(255) NOT NULL,
     pass_word VARCHAR(255) NOT NULL,
     token VARCHAR(255),
     user_type VARCHAR(50),
