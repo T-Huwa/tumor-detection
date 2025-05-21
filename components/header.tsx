@@ -1,35 +1,37 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { BrainCircuit, Menu, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { BrainCircuit, Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-interface NavLink{
-  href: string,
-  label: string,
+interface NavLink {
+  href: string;
+  label: string;
 }
 
-export function Header({links} : {links : Array<NavLink>}) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const pathname = usePathname()
+export function Header({ links }: { links: Array<NavLink> }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+
+  const router = useRouter();
 
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
+      setIsScrolled(window.scrollY > 10);
+    };
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close mobile menu when route changes
   useEffect(() => {
-    setIsMenuOpen(false)
-  }, [pathname])
+    setIsMenuOpen(false);
+  }, [pathname]);
 
   // const navLinks = [
   //   { href: "/user", label: "Home" },
@@ -50,7 +52,11 @@ export function Header({links} : {links : Array<NavLink>}) {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <BrainCircuit className="h-6 w-6 text-blue-600 mr-2" />
-            <span className="font-bold text-blue-900 text-lg">Brain Tumor AI</span>
+            <span className="font-bold text-blue-900 text-lg">
+              Brain Tumor AI
+              {pathname.includes("/doctor") && <> - Doctor Dashboard</>}
+              {pathname.includes("/user") && <> - Nurse</>}
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -69,6 +75,7 @@ export function Header({links} : {links : Array<NavLink>}) {
               </Link>
             ))}
             <Button
+              onClick={() => router.push("/")}
               variant="outline"
               size="sm"
               className="ml-2 text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700"
@@ -84,7 +91,11 @@ export function Header({links} : {links : Array<NavLink>}) {
             aria-expanded={isMenuOpen}
             aria-label="Toggle menu"
           >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </button>
         </div>
 
@@ -97,7 +108,9 @@ export function Header({links} : {links : Array<NavLink>}) {
                   key={link.href}
                   href={link.href}
                   className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    pathname === link.href ? "bg-blue-100 text-blue-700" : "text-blue-600 hover:bg-blue-100"
+                    pathname === link.href
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-blue-600 hover:bg-blue-100"
                   }`}
                 >
                   {link.label}
@@ -115,6 +128,5 @@ export function Header({links} : {links : Array<NavLink>}) {
         )}
       </div>
     </header>
-  )
+  );
 }
-

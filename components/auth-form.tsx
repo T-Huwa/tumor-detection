@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, LockKeyhole, AlertCircle, User } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,6 +18,8 @@ export function AuthForm() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +33,13 @@ export function AuthForm() {
     try {
       setIsLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (email == "admin@gmail.com") {
+        router.push("/admin");
+      } else if (email == "doctor@gmail.com") {
+        router.push("/doctor");
+      } else if (email == "nurse@gmail.com") {
+        router.push("/user");
+      } else alert("Invalid user");
 
       console.log("Login attempt with:", email);
     } catch {
@@ -133,19 +143,19 @@ export function AuthForm() {
                     </div>
                   </div>
 
-                  {/* <Button
+                  <Button
                     type="submit"
                     className="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-full"
                     disabled={isLoading}
                   >
                     {isLoading ? "Authenticating..." : "Sign In"}
-                  </Button> */}
-                  <Link
+                  </Button>
+                  {/* <Link
                     href={"/user"}
                     className="p-2 mt-2 w-full bg-amber-600 hover:bg-amber-700 text-white rounded-full"
                   >
                     {isLoading ? "Authenticating..." : "Sign In"}
-                  </Link>
+                  </Link> */}
                 </form>
               ) : (
                 <form onSubmit={handleRegisterSubmit} className="space-y-4">
