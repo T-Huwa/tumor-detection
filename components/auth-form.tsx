@@ -1,66 +1,68 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Mail, LockKeyhole, AlertCircle, User } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Mail, LockKeyhole, AlertCircle, User } from "lucide-react";
+import Link from "next/link";
 
 export function AuthForm() {
-  const [isLogin, setIsLogin] = useState(true)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [name, setName] = useState("")
-  const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
+    setError("");
 
     if (!email || !password) {
-      setError("Please enter both email and password")
-      return
+      setError("Please enter both email and password");
+      return;
     }
 
     try {
-      setIsLoading(true)
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("Login attempt with:", email)
+      setIsLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      console.log("Login attempt with:", email);
     } catch {
-      setError("Authentication failed. Please check your credentials.")
+      setError("Authentication failed. Please check your credentials.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleRegisterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
+    setError("");
 
     if (!name || !email || !password) {
-      setError("Please fill in all fields")
-      return
+      setError("Please fill in all fields");
+      return;
     }
 
     try {
-      setIsLoading(true)
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("Register attempt with:", name, email)
+      setIsLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log("Register attempt with:", name, email);
     } catch {
-      setError("Registration failed. Please try again.")
+      setError("Registration failed. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const toggleForm = () => {
-    setIsLogin(!isLogin)
-    setError("")
-  }
+    setIsLogin(!isLogin);
+    setError("");
+  };
 
   return (
     <div
@@ -74,14 +76,18 @@ export function AuthForm() {
             isLogin ? "left-0 pl-2" : "left-[200px] pr-2"
           }`}
         >
-          <div className={`bg-white/30 h-full p-2 md:p-8 ${
-            isLogin ? "rounded-l-sm" : "rounded-r-sm"
-            }`}>
+          <div
+            className={`bg-white/30 h-full p-2 md:p-8 ${
+              isLogin ? "rounded-l-sm" : "rounded-r-sm"
+            }`}
+          >
             <CardHeader className="mb-6">
               <CardTitle className="text-2xl font-bold text-center text-gray-900">
                 Brain Tumor Detection & Management
               </CardTitle>
-              <p className="text-center text-gray-700">{isLogin ? "Login" : "Register"}</p>
+              <p className="text-center text-gray-700">
+                {isLogin ? "Login" : "Register"}
+              </p>
             </CardHeader>
 
             {error && (
@@ -127,13 +133,19 @@ export function AuthForm() {
                     </div>
                   </div>
 
-                  <Button
+                  {/* <Button
                     type="submit"
                     className="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-full"
                     disabled={isLoading}
                   >
                     {isLoading ? "Authenticating..." : "Sign In"}
-                  </Button>
+                  </Button> */}
+                  <Link
+                    href={"/user"}
+                    className="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-full"
+                  >
+                    {isLoading ? "Authenticating..." : "Sign In"}
+                  </Link>
                 </form>
               ) : (
                 <form onSubmit={handleRegisterSubmit} className="space-y-4">
@@ -172,7 +184,10 @@ export function AuthForm() {
                   </div>
 
                   <div>
-                    <Label htmlFor="register-password" className="text-gray-800">
+                    <Label
+                      htmlFor="register-password"
+                      className="text-gray-800"
+                    >
                       Password
                     </Label>
                     <div className="relative">
@@ -209,8 +224,13 @@ export function AuthForm() {
           {isLogin ? (
             <>
               <h3 className="text-lg font-semibold">Register</h3>
-              <p className="text-center text-sm">Sign up to create your account</p>
-              <Button className="bg-amber-500 hover:bg-amber-600 w-full" onClick={toggleForm}>
+              <p className="text-center text-sm">
+                Sign up to create your account
+              </p>
+              <Button
+                className="bg-amber-500 hover:bg-amber-600 w-full"
+                onClick={toggleForm}
+              >
                 Sign Up
               </Button>
             </>
@@ -218,7 +238,10 @@ export function AuthForm() {
             <>
               <h3 className="text-lg font-semibold">Login</h3>
               <p className="text-center text-sm">Already have an account?</p>
-              <Button className="bg-amber-500 hover:bg-amber-600 w-full" onClick={toggleForm}>
+              <Button
+                className="bg-amber-500 hover:bg-amber-600 w-full"
+                onClick={toggleForm}
+              >
                 Sign In
               </Button>
             </>
@@ -226,6 +249,5 @@ export function AuthForm() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
