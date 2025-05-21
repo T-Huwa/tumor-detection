@@ -1,6 +1,4 @@
- CREATE DATABASE IF NOT EXISTS tumor_detection;
- 
- USE `tumor_detection`;
+ USE `bct81wkvcenzhcmoaleb`;
  
  CREATE TABLE login_users (
     id INT PRIMARY KEY AUTO_INCREMENT,
