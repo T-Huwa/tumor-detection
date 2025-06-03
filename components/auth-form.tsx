@@ -7,14 +7,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, LockKeyhole, AlertCircle, User } from "lucide-react";
+import {
+  Mail,
+  LockKeyhole,
+  AlertCircle,
+  User,
+  ChevronDown,
+  FileUser,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { SelectIcon, SelectTrigger } from "@radix-ui/react-select";
 
 export function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +73,16 @@ export function AuthForm() {
       return;
     }
 
+    if (password.length < 6) {
+      setError("The password should have a minimum length of 6 characters.");
+      return;
+    }
+
+    if (password !== confirm) {
+      setError("Password and Comfirm password do not match. Try again!");
+      return;
+    }
+
     try {
       setIsLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -75,14 +100,12 @@ export function AuthForm() {
   };
 
   return (
-    <div
-      className="flex justify-center items-center min-h-screen bg-cover bg-center"
-      style={{ backgroundImage: "url('/your-background-image.jpg')" }}
-    >
-      <div className="relative w-[700px] h-[500px] rounded-xl shadow-2xl overflow-hidden backdrop-blur-sm bg-white/10">
+    <div className="flex justify-center items-center min-h-screen bg-cover bg-center">
+      {/*style={{ backgroundImage: "url('/your-background-image.jpg')" }}*/}
+      <div className="relative w-[700px] h-[600px] rounded-xl shadow-2xl overflow-hidden backdrop-blur-sm bg-white/10">
         {/* Main Form Section */}
         <div
-          className={`absolute top-0 w-[500px] h-full transition-all duration-700 ease-in-out bg-white/20 py-2 ${
+          className={`overflow-y-auto absolute top-0 w-[500px] h-full transition-all duration-700 ease-in-out bg-white/20 py-2 ${
             isLogin ? "left-0 pl-2" : "left-[200px] pr-2"
           }`}
         >
@@ -107,7 +130,7 @@ export function AuthForm() {
               </div>
             )}
 
-            <CardContent>
+            <CardContent className="overflow-y-auto">
               {isLogin ? (
                 <form onSubmit={handleLoginSubmit} className="space-y-4">
                   <div>
@@ -158,7 +181,10 @@ export function AuthForm() {
                   </Link> */}
                 </form>
               ) : (
-                <form onSubmit={handleRegisterSubmit} className="space-y-4">
+                <form
+                  onSubmit={handleRegisterSubmit}
+                  className="space-y-4 overflow-y-auto"
+                >
                   <div>
                     <Label htmlFor="name" className="text-gray-800">
                       Full Name
@@ -194,6 +220,42 @@ export function AuthForm() {
                   </div>
 
                   <div>
+                    <Label htmlFor="register-role" className="text-gray-800">
+                      Role
+                    </Label>
+                    <div className="relative">
+                      <FileUser className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                      <div className="pl-10 bg-white/60 rounded-md border-gray-300 focus:border-blue-400">
+                        <Select>
+                          <SelectTrigger>
+                            <div className="flex py-2">
+                              <SelectValue placeholder="Select A Role" />
+                              <SelectIcon className="SelectIcon">
+                                <ChevronDown />
+                              </SelectIcon>
+                              <SelectContent>
+                                <SelectItem value="--">--</SelectItem>
+                                <SelectItem value="nurse">Nurse</SelectItem>
+                                <SelectItem value="doctor">Doctor</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                              </SelectContent>
+                            </div>
+                          </SelectTrigger>
+                        </Select>
+                      </div>
+
+                      {/* <Input
+                        id="register-email"
+                        type="email"
+                        placeholder="doctor@hospital.med"
+                        className="pl-10 bg-white/60 border-gray-300 focus:border-blue-400"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      /> */}
+                    </div>
+                  </div>
+
+                  <div>
                     <Label
                       htmlFor="register-password"
                       className="text-gray-800"
@@ -208,6 +270,22 @@ export function AuthForm() {
                         className="pl-10 bg-white/60 border-gray-300 focus:border-blue-400"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="register-confirm" className="text-gray-800">
+                      Confirm Password
+                    </Label>
+                    <div className="relative">
+                      <LockKeyhole className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                      <Input
+                        id="register-confirm"
+                        type="password"
+                        className="pl-10 bg-white/60 border-gray-300 focus:border-blue-400"
+                        value={confirm}
+                        onChange={(e) => setConfirm(e.target.value)}
                       />
                     </div>
                   </div>

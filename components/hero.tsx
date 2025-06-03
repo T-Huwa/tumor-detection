@@ -29,7 +29,7 @@ export default function Hero({ isDoctor = false }: { isDoctor: boolean }) {
             detection and classification of brain tumors from MRI scans.
           </p>
         </div>
-        {!isDoctor && (
+        {isDoctor && (
           <div className="flex flex-col space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0 md:justify-start">
             <Link
               href={"/user/analyze"}
@@ -41,7 +41,7 @@ export default function Hero({ isDoctor = false }: { isDoctor: boolean }) {
         )}
       </div>
       <div className="flex-1">
-        <div className="relative mx-auto aspect-square max-w-md overflow-hidden rounded-xl border border-gray-300 shadow-xl md:max-w-lg">
+        <div className="relative mx-auto aspect-square max-w-sm overflow-hidden rounded-xl border border-gray-300 shadow-xl md:max-w-md">
           <Image
             src="/tumor-img.jpg"
             alt="Brain MRI scan with tumor detection overlay"

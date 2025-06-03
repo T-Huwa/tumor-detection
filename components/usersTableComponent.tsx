@@ -11,7 +11,6 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-// This I just put it here for TypeScript typing
 interface User {
   id: number;
   name: string;
@@ -43,7 +42,7 @@ function FilterButton({
   );
 }
 
-export default function UsersListPage() {
+export default function userTableGroup() {
   const users: User[] = [
     {
       id: 1,
@@ -117,7 +116,7 @@ export default function UsersListPage() {
 
   return (
     <>
-      <div className="px-6 py-7 my-6">
+      <div className="">
         <h3 className="font-bold text-lg mb-6">List of Users</h3>
 
         <div className="mb-6 flex gap-2">
