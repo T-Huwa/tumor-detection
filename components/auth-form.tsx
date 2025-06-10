@@ -14,6 +14,7 @@ import {
   User,
   ChevronDown,
   FileUser,
+  Check,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -31,7 +32,9 @@ export function AuthForm() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [name, setName] = useState("");
+  const [role, setRole] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -47,18 +50,33 @@ export function AuthForm() {
 
     try {
       setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      if (email == "admin@gmail.com") {
-        router.push("/admin");
-      } else if (email == "doctor@gmail.com") {
-        router.push("/doctor");
-      } else if (email == "nurse@gmail.com") {
-        router.push("/user");
-      } else alert("Invalid user");
 
-      console.log("Login attempt with:", email);
-    } catch {
-      setError("Authentication failed. Please check your credentials.");
+      const response = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: email, password: password }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Invalid credentials");
+      }
+
+      const data = await response.json();
+      if (data.access_token) {
+        setSuccess("Login Successful. Redirecting...");
+
+        setEmail("");
+        setPassword("");
+
+        localStorage.setItem("auth", JSON.stringify(data));
+        router.push("/" + data.role);
+      } else {
+        setError("Authentication failed. Please check your credentials.");
+      }
+    } catch (error: any) {
+      setError(error.message || "Authentication failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -85,11 +103,36 @@ export function AuthForm() {
 
     try {
       setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log("Register attempt with:", name, email);
-    } catch {
-      setError("Registration failed. Please try again.");
-    } finally {
+
+      const response = await fetch(`${process.env.BACKEND_URL}/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          full_name: name,
+          password: password,
+          role: role,
+        }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.message || "Registration failed");
+      }
+
+      setSuccess(
+        "Registration request submitted succcessfully! You will be notified once it is approved."
+      );
+      setEmail("");
+      setName("");
+      setPassword("");
+      setConfirm("");
+      setRole("");
+      setIsLoading(false);
+    } catch (err: any) {
+      setError(err.message || "Registration failed. Please try again.");
       setIsLoading(false);
     }
   };
@@ -127,6 +170,13 @@ export function AuthForm() {
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center text-red-800 text-sm">
                 <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
                 {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="mb-4 p-3 bg-green-50 border border-red-200 rounded-md flex items-center text-green-800 text-sm">
+                <Check className="h-4 w-4 mr-2 flex-shrink-0" />
+                {success}
               </div>
             )}
 
@@ -226,21 +276,21 @@ export function AuthForm() {
                     <div className="relative">
                       <FileUser className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
                       <div className="pl-10 bg-white/60 rounded-md border-gray-300 focus:border-blue-400">
-                        <Select>
-                          <SelectTrigger>
-                            <div className="flex py-2">
-                              <SelectValue placeholder="Select A Role" />
-                              <SelectIcon className="SelectIcon">
-                                <ChevronDown />
-                              </SelectIcon>
-                              <SelectContent>
-                                <SelectItem value="--">--</SelectItem>
-                                <SelectItem value="nurse">Nurse</SelectItem>
-                                <SelectItem value="doctor">Doctor</SelectItem>
-                                <SelectItem value="admin">Admin</SelectItem>
-                              </SelectContent>
-                            </div>
-                          </SelectTrigger>
+                        <Select onValueChange={(value) => setRole(value)}>
+                          <div className="py-2">
+                            <SelectTrigger className="w-full flex border-gray-300 focus:border-blue-400">
+                              <SelectValue
+                                placeholder="Select A Role"
+                                className="flex-1 items-start"
+                              />
+                              <ChevronDown />
+                            </SelectTrigger>
+                          </div>
+                          <SelectContent>
+                            <SelectItem value="nurse">Nurse</SelectItem>
+                            <SelectItem value="doctor">Doctor</SelectItem>
+                            <SelectItem value="admin">Admin</SelectItem>
+                          </SelectContent>
                         </Select>
                       </div>
 

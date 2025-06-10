@@ -17,6 +17,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  env: {
+    BACKEND_URL: "http://127.0.0.1:8000",
+  },
 };
 
 mergeConfig(nextConfig, userConfig);

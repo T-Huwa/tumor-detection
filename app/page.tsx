@@ -1,3 +1,8 @@
+"use client";
+
+import Router from "next/router";
+import { useState, useEffect } from "react";
+
 import { AuthForm } from "@/components/auth-form";
 
 export default function Home() {

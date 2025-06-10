@@ -15,7 +15,6 @@ export function Header({ links }: { links: Array<NavLink> }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
-
   const router = useRouter();
 
   // Handle scroll effect
@@ -28,18 +27,14 @@ export function Header({ links }: { links: Array<NavLink> }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname]);
 
-  // const navLinks = [
-  //   { href: "/user", label: "Home" },
-  //   { href: "/user/analyze", label: "Prediction" },
-  //   { href: "/user/results", label: "Scan Results" },
-  //   { href: "/user/reports", label: "Reports" },
-  //   { href: "/user/profile", label: "User Profile" },
-  // ]
+  const handleLogout = (): any => {
+    localStorage.removeItem("auth");
+    router.push("/");
+  };
 
   return (
     <header
@@ -75,7 +70,7 @@ export function Header({ links }: { links: Array<NavLink> }) {
               </Link>
             ))}
             <Button
-              onClick={() => router.push("/")}
+              onClick={handleLogout}
               variant="outline"
               size="sm"
               className="ml-2 text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700"
