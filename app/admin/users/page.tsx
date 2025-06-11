@@ -23,7 +23,8 @@ interface User {
   is_active: boolean;
 }
 
-interface Auth {
+export interface Auth {
+  id: number;
   access_token: string;
   token_type: string;
   email: string;
@@ -143,7 +144,7 @@ export default function UsersListPage() {
       // Remove user from list
       setUsers((prev) => prev.filter((u) => u.id !== userId));
     } catch (err) {
-      console.error("Revokcation error:", err);
+      console.error("Revocation error:", err);
     }
   };
 
@@ -191,7 +192,7 @@ export default function UsersListPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredUsers.length - 1 ? (
+            {filteredUsers.length ? (
               filteredUsers.map((user, index) => (
                 <TableRow key={user.id}>
                   <TableCell>{index + 1}</TableCell>

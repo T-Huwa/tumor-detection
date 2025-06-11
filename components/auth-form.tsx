@@ -71,7 +71,8 @@ export function AuthForm() {
         setPassword("");
 
         localStorage.setItem("auth", JSON.stringify(data));
-        router.push("/" + data.role);
+        if (data.role === "nurse") router.push("/user");
+        else router.push("/" + data.role);
       } else {
         setError("Authentication failed. Please check your credentials.");
       }
