@@ -57,6 +57,7 @@ export default function UsersListPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [filter, setFilter] = useState<string>("all");
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const authString = localStorage.getItem("auth");
   //console.log(authString);

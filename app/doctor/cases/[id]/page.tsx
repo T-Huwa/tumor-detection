@@ -1,78 +1,166 @@
-import * as Tabs from "@radix-ui/react-tabs";
+"use client";
+
+import html2pdf from "html2pdf.js";
+import { useRef } from "react";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
+  TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
-import React from "react";
 import CaseForm from "@/components/case-form";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowLeftCircle, Download, Loader } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
-const caseData = {
-  patientName: "P. John",
-  age: 54,
-  address: "1/A Sandstone area Johannesburg",
-  mobile: "987654321",
-  aiDiagnosis:
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique quis ipsam vero voluptatum sed eum id animi repellendus ipsa ratione.",
-  recommendedTests:
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, consequatur natus quibusdam accusantium eligendi itaque quasi, ea id at sed nihil magnam veniam hic dolor repellendus in culpa ratione a? Quam ea sapiente aut, ex provident illum dicta quasi optio.",
-  mriImage: "/placeholder.svg?height=200&width=200",
-  camImage: "/placeholder.svg?height=200&width=200",
-  scans: [
-    { id: 1, prediction: "Glioma", diseaseType: "Brain Tumor", confidence: 95 },
-    {
-      id: 2,
-      prediction: "Meningioma",
-      diseaseType: "Brain Tumor",
-      confidence: 85,
-    },
-    { id: 4, prediction: "Glioma", diseaseType: "Brain Tumor", confidence: 95 },
-  ],
-  nurseFeedback: "Lorem, ipsum dolor sit amet consectetur adipisicing elit",
-  doctorFeedback:
-    "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ducimus, ipsum?",
-  doctorDecision: "Giloma (Tumor)",
-};
+export default function CaseDetail() {
+  const { id } = useParams();
+  const [exporting, setExporting] = useState(false);
+  const [caseData, setCaseData] = useState<any>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-export async function generateStaticParams() {
-  // Generate IDs from 1 to 100
-  const caseIds = Array.from({ length: 100 }, (_, i) => (i + 1).toString());
+  const authString = localStorage.getItem("auth");
 
-  return caseIds.map((id) => ({ id }));
-}
+  let auth = null;
+  if (authString) {
+    auth = JSON.parse(authString);
+  }
+  const authToken = auth?.access_token;
 
-export default async function CaseDetail({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+  const handleFileUpload = async () => {
+    if (!selectedFile) return;
+
+    const authString = localStorage.getItem("auth");
+    const auth = authString ? JSON.parse(authString) : null;
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    setShowModal(true);
+
+    try {
+      const res = await fetch(
+        `${process.env.BACKEND_URL}/cases/upload-oimage/${id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${auth?.access_token}`,
+          },
+          body: formData,
+        }
+      );
+
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.detail || "Upload failed");
+
+      console.log("Uploaded successfully:", result);
+      setCaseData((prev: any) => ({
+        ...prev,
+        o_image: result.url,
+        status: "processed",
+      }));
+    } catch (error) {
+      console.error("Upload error:", error);
+    } finally {
+      setShowModal(false);
+    }
+  };
+
+  const printRef = useRef(null);
+
+  useEffect(() => {
+    const authString = localStorage.getItem("auth");
+
+    let auth = null;
+    if (authString) {
+      auth = JSON.parse(authString);
+    }
+
+    const fetchCase = async (token: string) => {
+      try {
+        const res = await fetch(`${process.env.BACKEND_URL}/cases/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch case");
+
+        const data = await res.json();
+        setCaseData(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    if (id) fetchCase(auth?.access_token);
+  }, []);
+
+  const handleDownloadPDF = () => {
+    setExporting(true);
+    const element = printRef.current;
+    if (!element) return;
+
+    html2pdf()
+      .set({
+        margin: 0.5,
+        filename: `case_${id}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+      })
+      .from(element)
+      .save();
+
+    setExporting(false);
+  };
+
+  if (!caseData) return <div className="p-6">Loading case...</div>;
 
   const CaseFormData = {
-    id: parseInt(id),
-    nurseFeedback: caseData.nurseFeedback,
-    doctorFeedback: caseData.doctorFeedback,
-    doctorDecision: caseData.doctorDecision,
+    id: caseData.id,
+    doctorFeedback: caseData.doctor_feedback,
+    doctorDecision: caseData.doctor_decision,
   };
 
   return (
     <main className="px-6 py-16">
-      <h1 className="text-2xl font-semibold mb-4">
-        Patient Case History - ID {id}
-      </h1>
+      <div className="flex">
+        <Link
+          href={"/doctor/cases"}
+          className="bg-gray-200 border border-gray-100 shadow-md hover:shadow-lg hover:bg-gray-300 my-auto p-2 rounded-full transition-colors"
+        >
+          <ArrowLeft className="my-auto" />
+        </Link>
+        <h1 className="text-2xl flex-1 font-semibold mb-4 ml-3">
+          Patient Case History - ID {id}
+        </h1>
+        <Button
+          size={"sm"}
+          onClick={handleDownloadPDF}
+          className="bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Download PDF <Download />
+        </Button>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div ref={printRef}>
         <Card className="border rounded p-4 shadow">
           <CardHeader className="font-semibold text-lg">
             Patient Details
           </CardHeader>
           <CardContent className="mt-2 space-y-1">
             <p>
-              <strong>Name:</strong> {caseData.patientName}
+              <strong>Name:</strong> {caseData.full_name}
             </p>
             <p>
               <strong>Age:</strong> {caseData.age}
@@ -86,89 +174,90 @@ export default async function CaseDetail({
           </CardContent>
         </Card>
 
-        <Card className="border rounded p-4 shadow">
-          <CardHeader className="font-semibold text-lg">
-            Diagnosis Information
-          </CardHeader>
-          <Tabs.Root defaultValue="ai">
-            <Tabs.List className="flex space-x-4 mt-2">
-              <Tabs.Trigger value="ai" className="px-3 py-1 border rounded">
-                AI Diagnosis
-              </Tabs.Trigger>
-              <Tabs.Trigger value="test" className="px-3 py-1 border rounded">
-                Recommended Tests
-              </Tabs.Trigger>
-            </Tabs.List>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <Card className="border rounded p-4 shadow">
+            <CardHeader className="font-semibold text-lg">
+              Patient Original MRI Image
+            </CardHeader>
+            <CardContent className="mt-4 space-y-4">
+              {!caseData.o_image ? (
+                <>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      setSelectedFile(e.target.files?.[0] || null)
+                    }
+                  />
+                  <Button
+                    onClick={handleFileUpload}
+                    className="bg-blue-400 hover:bg-blue-600 text-white"
+                    size={"sm"}
+                  >
+                    Upload Image
+                  </Button>
+                </>
+              ) : (
+                <Image
+                  width={200}
+                  height={200}
+                  src={caseData.o_image || "/placeholder.svg"}
+                  alt="MRI Image"
+                  className="w-full rounded"
+                />
+              )}
+            </CardContent>
+          </Card>
 
-            <Tabs.Content value="ai" className="mt-3">
-              {caseData.aiDiagnosis}
-            </Tabs.Content>
-            <Tabs.Content value="test" className="mt-3">
-              {caseData.recommendedTests}
-            </Tabs.Content>
-          </Tabs.Root>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <Card className="border rounded p-4 shadow">
-          <CardHeader className="font-semibold text-lg">
-            Patient Original MRI Image
-          </CardHeader>
-          <CardContent className="mt-4">
-            <Image
-              width={200}
-              height={200}
-              src={caseData.mriImage}
-              alt="MRI Image"
-              className="w-full rounded"
-            />
-          </CardContent>
-        </Card>
-
-        <Card className="border rounded p-4 shadow">
-          <CardHeader className="font-semibold text-lg">
-            Model Prediction (Class Activation Map)
-          </CardHeader>
-          <CardContent className="mt-4">
-            <Image
-              width={200}
-              height={200}
-              src={caseData.camImage}
-              alt="CAM Image"
-              className="w-full rounded"
-            />
-          </CardContent>
-        </Card>
-
-        <Card className="border rounded p-4 shadow">
-          <CardHeader className="font-semibold text-lg">
-            Model Result
-          </CardHeader>
-          <CardContent className="mt-4">
-            <Table>
-              <TableRow>
-                <TableHead>Scan #</TableHead>
-                <TableHead>Prediction</TableHead>
-                <TableHead>Disease Type</TableHead>
-                <TableHead>Confidence (%)</TableHead>
-              </TableRow>
-              <TableBody>
-                {caseData.scans.map((scan) => (
-                  <TableRow key={scan.id}>
-                    <TableCell>{scan.id}</TableCell>
-                    <TableCell>{scan.prediction}</TableCell>
-                    <TableCell>{scan.diseaseType}</TableCell>
-                    <TableCell>{scan.confidence}%</TableCell>
+          <Card className="border rounded p-4 shadow">
+            <CardHeader className="font-semibold text-lg">
+              Model Result
+            </CardHeader>
+            <CardContent className="mt-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Prediction</TableHead>
+                    <TableHead>Disease Type</TableHead>
+                    <TableHead>Confidence (%)</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      {caseData.prediction ? caseData.prediction : "N/A"}
+                    </TableCell>
+                    <TableCell>Brain Tumor</TableCell>
+                    <TableCell>
+                      {caseData.pred_probability
+                        ? `${(caseData.pred_probability * 100).toFixed(1)}%`
+                        : "N/A"}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
 
-        <CaseForm caseData={CaseFormData} isEditable={true} />
+          <CaseForm
+            setLoading={setShowModal}
+            caseData={CaseFormData}
+            isEditable={true}
+            token={authToken}
+            isExporting={exporting}
+          />
+        </div>
       </div>
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg text-center">
+            <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p className="text-lg font-medium">
+              Processing Image. Please Wait...
+            </p>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

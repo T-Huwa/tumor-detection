@@ -29,13 +29,22 @@ export default function Hero({ isDoctor = false }: { isDoctor: boolean }) {
             detection and classification of brain tumors from MRI scans.
           </p>
         </div>
-        {isDoctor && (
+        {isDoctor ? (
           <div className="flex flex-col space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0 md:justify-start">
             <Link
-              href={"/user/analyze"}
+              href={"/doctor/cases"}
               className="p-3 text-white rounded-lg bg-gradient-to-r from-blue-600 to-teal-500 hover:opacity-90"
             >
-              Start Predicting
+              Cases
+            </Link>
+          </div>
+        ) : (
+          <div className="flex flex-col space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0 md:justify-start">
+            <Link
+              href={"/user/cases/new"}
+              className="p-3 text-white rounded-lg bg-gradient-to-r from-blue-600 to-teal-500 hover:opacity-90"
+            >
+              New Case
             </Link>
           </div>
         )}

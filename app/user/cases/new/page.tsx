@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import BrainScanAnalyzer from "@/components/brain-scan-analyzer";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Auth } from "@/app/admin/users/page";
+import { useRouter } from "next/navigation";
 
 interface Doctor {
   id: number;
@@ -33,8 +33,9 @@ export default function AnalyzePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
 
+  const router = useRouter();
+
   const authString = localStorage.getItem("auth");
-  //console.log(authString);
 
   const auth: Auth | null = authString ? JSON.parse(authString) : null;
 
@@ -42,14 +43,6 @@ export default function AnalyzePage() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-
-    // console.log({
-    //   full_name: fullName,
-    //   age: parseInt(age),
-    //   address: address,
-    //   mobile: mobile,
-    //   doctor_id: parseInt(selectedDoctor),
-    // });
 
     try {
       const response = await fetch(`${process.env.BACKEND_URL}/cases/create`, {
@@ -77,17 +70,16 @@ export default function AnalyzePage() {
           doctor_decision: null,
         }),
       });
-      console.log(await response.json());
 
       if (!response.ok) {
         throw new Error("Failed to create case");
       }
 
-      const result = await response.json();
-
-      setSuccess("Case Created successfully!");
+      setSuccess("Case Created successfully! Redirecting...");
+      router.push("/user/cases");
     } catch (err: any) {
       setError("Something went wrong. Please try again.");
+      console.log(err);
     } finally {
       setIsLoading(false);
     }
@@ -102,11 +94,8 @@ export default function AnalyzePage() {
             Authorization: `Bearer ${auth?.access_token}`,
           },
         });
-        const data: Doctor[] = await res.json().then();
+        const data: Doctor[] = await res.json();
         setDoctors(data);
-        // console.log(data);
-        // console.log("doctors:");
-        // console.log(doctors);
       } catch (error) {
         console.error("Failed to fetch doctors:", error);
       } finally {
@@ -118,9 +107,9 @@ export default function AnalyzePage() {
   }, []);
 
   return (
-    <div className="container mx-auto py-16">
-      <div className="mx-auto p-2 md:pl-4 md:py-4 md:pr-0 max-w-xl">
-        <div className="bg-white/20 p-2 md:p-8">
+    <div className="container mx-auto pt-10">
+      <div className="mx-auto px-2 md:px-4 my-6 md:py-2 md:pr-0 max-w-xl border border-gray-200 rounded-md">
+        <div className="bg-white/20 p-2 md:px-4 ">
           <CardHeader className="mb-6">
             <CardTitle className="text-2xl font-bold text-center text-gray-900">
               Create new Patient Case

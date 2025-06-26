@@ -92,8 +92,8 @@ export function AuthForm() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("The password should have a minimum length of 6 characters.");
+    if (password.length < 4) {
+      setError("The password should have a minimum length of 4 characters.");
       return;
     }
 
