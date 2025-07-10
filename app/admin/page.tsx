@@ -74,30 +74,6 @@ export default function AdminDashboard() {
           </div>
           <Image src={"/nurses.jpg"} alt={"nurses"} width={70} height={70} />
         </Card>
-        <Card className="flex items-center justify-between p-4">
-          <div>
-            <h4 className="text-sm font-medium">Pending Cases</h4>
-            <p className="text-xl font-semibold">{pending}</p>
-          </div>
-          <Image
-            src={"/pending.jpg"}
-            alt={"pending cases"}
-            width={70}
-            height={70}
-          />
-        </Card>
-        <Card className="flex items-center justify-between p-4">
-          <div>
-            <h4 className="text-sm font-medium">Total Cases</h4>
-            <p className="text-xl font-semibold">{cases}</p>
-          </div>
-          <Image
-            src={"/cases.jpg"}
-            alt={"total cases"}
-            width={70}
-            height={70}
-          />
-        </Card>
       </div>
 
       <div className="grid grid-cols-1 xxl:grid-cols-2 gap-4">

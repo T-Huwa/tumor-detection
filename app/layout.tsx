@@ -1,10 +1,5 @@
-import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
-import Loader from "@/components/progress";
 import Progress from "@/components/progress";
-
-const inter = Inter({ subsets: ["latin"] });
-const poppins = Poppins({ weight: "500", subsets: ["latin"] });
 
 export const metadata = {
   title: "Brain Tumor Detection & Management",
@@ -18,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <div className="h-screen">
           <Progress>
             <div className="fixed h-100 inset-0 bg-white"></div>

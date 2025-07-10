@@ -28,6 +28,11 @@ export default function CaseDetail() {
   const [showModal, setShowModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const [uploadStatus, setUploadStatus] = useState<
+    "idle" | "uploading" | "success" | "error"
+  >("idle");
+  const [uploadMessage, setUploadMessage] = useState<string>("");
+
   const authString = localStorage.getItem("auth");
 
   let auth = null;
@@ -46,6 +51,8 @@ export default function CaseDetail() {
     formData.append("file", selectedFile);
 
     setShowModal(true);
+    setUploadStatus("uploading");
+    setUploadMessage("Processing Image. Please Wait...");
 
     try {
       const res = await fetch(
@@ -62,61 +69,71 @@ export default function CaseDetail() {
       const result = await res.json();
       if (!res.ok) throw new Error(result.detail || "Upload failed");
 
-      console.log("Uploaded successfully:", result);
-      setCaseData((prev: any) => ({
-        ...prev,
-        o_image: result.url,
-        status: "processed",
-      }));
-    } catch (error) {
-      console.error("Upload error:", error);
+      setUploadStatus("success");
+      setUploadMessage("Upload successful! Case updated.");
+
+      // Fetch case data again to get updated prediction and image
+      await fetchCase(auth?.access_token);
+    } catch (error: any) {
+      setUploadStatus("error");
+      setUploadMessage(error.message || "Upload failed");
     } finally {
-      setShowModal(false);
+      // Automatically close modal after a short delay
+      setTimeout(() => {
+        setShowModal(false);
+        setUploadStatus("idle");
+        setUploadMessage("");
+      }, 2500);
+    }
+  };
+
+  const waitForImageToLoad = (src: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("Image failed to load"));
+      img.src = src;
+    });
+  };
+
+  const fetchCase = async (token: string) => {
+    try {
+      const res = await fetch(`${process.env.BACKEND_URL}/cases/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch case");
+
+      const data = await res.json();
+      setCaseData(data);
+    } catch (err) {
+      console.error(err);
     }
   };
 
   const printRef = useRef(null);
 
   useEffect(() => {
-    const authString = localStorage.getItem("auth");
+    if (id && authToken) fetchCase(authToken);
+  }, [id, authToken]);
 
-    let auth = null;
-    if (authString) {
-      auth = JSON.parse(authString);
-    }
-
-    const fetchCase = async (token: string) => {
-      try {
-        const res = await fetch(`${process.env.BACKEND_URL}/cases/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch case");
-
-        const data = await res.json();
-        setCaseData(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    if (id) fetchCase(auth?.access_token);
-  }, []);
-
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     setExporting(true);
     const element = printRef.current;
     if (!element) return;
 
+    await waitForImageToLoad(caseData.o_image);
+
     html2pdf()
       .set({
         margin: 0.5,
-        filename: `case_${id}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
+        filename: `case_${caseData.full_name.replace(/\s+/g, "_")}_${id}.pdf`,
+        image: { type: "pgn", quality: 0.5 },
         html2canvas: { scale: 2 },
-        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
       })
       .from(element)
       .save();
@@ -175,7 +192,7 @@ export default function CaseDetail() {
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          <Card className="border rounded p-4 shadow">
+          <Card className="border rounded p-4 shadow max-w-md">
             <CardHeader className="font-semibold text-lg">
               Patient Original MRI Image
             </CardHeader>
@@ -183,6 +200,7 @@ export default function CaseDetail() {
               {!caseData.o_image ? (
                 <>
                   <Input
+                    className="hover:bg-blue-300"
                     type="file"
                     accept="image/*"
                     onChange={(e) =>
@@ -198,44 +216,27 @@ export default function CaseDetail() {
                   </Button>
                 </>
               ) : (
-                <Image
-                  width={200}
-                  height={200}
+                <img
                   src={caseData.o_image || "/placeholder.svg"}
                   alt="MRI Image"
-                  className="w-full rounded"
+                  crossOrigin="anonymous"
+                  className={`${exporting ? "w-64" : "max-w-sm"} rounded`}
                 />
               )}
-            </CardContent>
-          </Card>
 
-          <Card className="border rounded p-4 shadow">
-            <CardHeader className="font-semibold text-lg">
-              Model Result
-            </CardHeader>
-            <CardContent className="mt-4">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Prediction</TableHead>
-                    <TableHead>Disease Type</TableHead>
-                    <TableHead>Confidence (%)</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      {caseData.prediction ? caseData.prediction : "N/A"}
-                    </TableCell>
-                    <TableCell>Brain Tumor</TableCell>
-                    <TableCell>
-                      {caseData.pred_probability
-                        ? `${(caseData.pred_probability * 100).toFixed(1)}%`
-                        : "N/A"}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+              <div className="font-semibold text-lg">Model Result</div>
+              <div className="mt-4 space-y-2">
+                <p>
+                  <strong>Prediction:</strong>{" "}
+                  {caseData.prediction ? caseData.prediction : "N/A"}
+                </p>
+                <p>
+                  <strong>Confidence:</strong>{" "}
+                  {caseData.pred_probability
+                    ? `${(caseData.pred_probability * 100).toFixed(1)}%`
+                    : "N/A"}
+                </p>
+              </div>
             </CardContent>
           </Card>
 
@@ -250,11 +251,17 @@ export default function CaseDetail() {
       </div>
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg text-center">
-            <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-lg font-medium">
-              Processing Image. Please Wait...
-            </p>
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg text-center w-[300px]">
+            {uploadStatus === "uploading" ? (
+              <>
+                <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+              </>
+            ) : uploadStatus === "success" ? (
+              <div className="text-green-600 text-2xl mb-2">✓</div>
+            ) : uploadStatus === "error" ? (
+              <div className="text-red-600 text-2xl mb-2">✗</div>
+            ) : null}
+            <p className="text-lg font-medium">{uploadMessage}</p>
           </div>
         </div>
       )}

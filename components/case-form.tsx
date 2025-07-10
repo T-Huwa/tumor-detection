@@ -76,7 +76,7 @@ const CaseForm = ({
   };
 
   return (
-    <Card className="border rounded p-4 shadow">
+    <Card className="border rounded p-4 shadow max-w-md">
       <CardHeader className="font-semibold text-lg">Diagnosis</CardHeader>
       {message && (
         <div className="mb-4 p-3 bg-green-50 border border-red-200 rounded-md flex items-center text-green-800 text-sm">
@@ -99,16 +99,29 @@ const CaseForm = ({
           </div>
 
           <div className="form-control my-6">
-            <Label className="absolute translate-y-[-11px] translate-x-[7px] bg-white p-1">
-              Doctor's Decision
-            </Label>
-            <Input
-              type="text"
-              disabled={!isEditable}
-              onChange={(e) => setDecision(e.target.value)}
-              value={decision}
-              className="border rounded-md p-3 my-2 text-gray-600"
-            />
+            {isExporting ? (
+              <div className="relative">
+                <div className="absolute -top-3 left-2 bg-white dark:bg-gray-900 px-1 text-sm">
+                  Doctor's Decision
+                </div>
+                <div className="border rounded-md p-3 mt-2 text-gray-600">
+                  {decision}
+                </div>
+              </div>
+            ) : (
+              <div className="relative">
+                <Label className="absolute -top-3 left-2 bg-white dark:bg-gray-900 px-1 text-sm">
+                  Doctor's Decision
+                </Label>
+                <Input
+                  type="text"
+                  disabled={!isEditable}
+                  onChange={(e) => setDecision(e.target.value)}
+                  value={decision}
+                  className="border rounded-md p-3 mt-2 text-gray-600"
+                />
+              </div>
+            )}
           </div>
 
           {isEditable && !isExporting && (

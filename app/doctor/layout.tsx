@@ -1,23 +1,19 @@
-import { Header } from "@/components/header"
+import { Header } from "@/components/header";
 
 export default function UserLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-
-    const navLinks = [
-        { href: "/doctor", label: "Home" },
-        { href: "/doctor/cases", label: "Alloted Cases" },
-        { href: "/doctor/reports", label: "Reports" },
-        { href: "/doctor/profile", label: "User Profile" },
-      ]
+  const navLinks = [
+    { href: "/doctor", label: "Home" },
+    { href: "/doctor/cases", label: "Alloted Cases" },
+    { href: "/doctor/profile", label: "User Profile" },
+  ];
   return (
     <>
       <Header links={navLinks} />
-      <div className="min-h-screen w-full">
-        {children}
-      </div>
+      <div className="min-h-screen w-full">{children}</div>
     </>
-  )
+  );
 }
