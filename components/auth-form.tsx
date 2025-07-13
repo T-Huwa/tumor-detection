@@ -16,7 +16,6 @@ import {
   FileUser,
   Check,
 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Select,
@@ -32,6 +31,7 @@ export function AuthForm() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [role, setRole] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -115,6 +115,7 @@ export function AuthForm() {
           full_name: name,
           password: password,
           role: role,
+          phone: phone,
         }),
       });
 
@@ -130,6 +131,7 @@ export function AuthForm() {
       setName("");
       setPassword("");
       setConfirm("");
+      setPhone("");
       setRole("");
       setIsLoading(false);
     } catch (err: any) {
@@ -266,6 +268,23 @@ export function AuthForm() {
                         className="pl-10 bg-white/60 border-gray-300 focus:border-blue-400"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="register-phone" className="text-gray-800">
+                      Phone Number (Optional)
+                    </Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                      <Input
+                        id="register-phone"
+                        type="tel"
+                        placeholder="doctor@hospital.med"
+                        className="pl-10 bg-white/60 border-gray-300 focus:border-blue-400"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
                       />
                     </div>
                   </div>

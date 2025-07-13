@@ -67,7 +67,15 @@ export default function CaseDetail() {
       );
 
       const result = await res.json();
-      if (!res.ok) throw new Error(result.detail || "Upload failed");
+      if (!res.ok) {
+        if (res.status === 422) {
+          throw new Error(
+            "Invalid image. Please upload a clearer or proper MRI scan."
+          );
+        }
+        const errorMessage = result.detail || result.error || "Upload failed";
+        throw new Error(errorMessage);
+      }
 
       setUploadStatus("success");
       setUploadMessage("Upload successful! Case updated.");

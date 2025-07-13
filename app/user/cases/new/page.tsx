@@ -89,11 +89,14 @@ export default function AnalyzePage() {
     const fetchUsers = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`${process.env.BACKEND_URL}/doctors`, {
-          headers: {
-            Authorization: `Bearer ${auth?.access_token}`,
-          },
-        });
+        const res = await fetch(
+          `${process.env.BACKEND_URL}/doctors/available`,
+          {
+            headers: {
+              Authorization: `Bearer ${auth?.access_token}`,
+            },
+          }
+        );
         const data: Doctor[] = await res.json();
         setDoctors(data);
       } catch (error) {
